@@ -1,0 +1,48 @@
+import java.util.HashMap;
+
+public class URLShortener {
+
+    private static final int SHORT_URL_LENGTH = 6;
+    private static final String BASE62_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private static final HashMap<String, String> urlMap = new HashMap<>();
+
+    public static String shortenURL(String longURL) {
+        // Check if the long URL is already shortened
+        if (urlMap.containsKey(longURL)) {
+            return urlMap.get(longURL);
+        }
+
+        // Generate a short URL using the hash code
+        int hashCode = longURL.hashCode();
+        String shortURL = convertToBase62(Math.abs(hashCode));
+
+        // Save the mapping
+        urlMap.put(longURL, shortURL);
+
+        return shortURL;
+    }
+
+    private static String convertToBase62(int value) {
+        StringBuilder shortURL = new StringBuilder();
+        while (value > 0) {
+            int remainder = value % BASE62_CHARACTERS.length();
+            shortURL.insert(0, BASE62_CHARACTERS.charAt(remainder));
+            value /= BASE62_CHARACTERS.length();
+        }
+
+        // Pad the short URL if needed
+        while (shortURL.length() < SHORT_URL_LENGTH) {
+            shortURL.insert(0, BASE62_CHARACTERS.charAt(0));
+        }
+
+        return shortURL.toString();
+    }
+
+    public static void main(String[] args) {
+        String longURL = "https://www.example.com";
+        String shortURL = shortenURL(longURL);
+
+        System.out.println("Long URL: " + longURL);
+        System.out.println("Short URL: " + shortURL);
+    }
+}

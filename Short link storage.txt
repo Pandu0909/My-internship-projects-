@@ -1,0 +1,84 @@
+// ShortLink.java (Entity class representing the mapping)
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class ShortLink {
+
+    @Id
+    private String id;  // Shortlink
+    private String longUrl;
+
+    // getters and setters
+}
+
+// ShortLinkRepository.java (Repository for database operations)
+import org.springframework.data.repository.CrudRepository;
+
+public interface ShortLinkRepository extends CrudRepository<ShortLink, String> {
+    ShortLink findByLongUrl(String longUrl);
+}
+
+// ShortLinkService.java (Service to manage shortlinks)
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ShortLinkService {
+
+    @Autowired
+    private ShortLinkRepository shortLinkRepository;
+
+    public String shortenUrl(String longUrl) {
+        ShortLink existingLink = shortLinkRepository.findByLongUrl(longUrl);
+        if (existingLink != null) {
+            return existingLink.getId();
+        }
+
+        String shortLink = generateShortLink();
+        ShortLink newLink = new ShortLink();
+        newLink.setId(shortLink);
+        newLink.setLongUrl(longUrl);
+        shortLinkRepository.save(newLink);
+
+        return shortLink;
+    }
+
+    public String expandUrl(String shortLink) {
+        ShortLink link = shortLinkRepository.findById(shortLink).orElse(null);
+        return (link != null) ? link.getLongUrl() : null;
+    }
+
+    private String generateShortLink() {
+        // Implement your shortlink generation logic here
+        // For simplicity, let's assume it generates a random 6-character string
+        // You may want to use a more sophisticated algorithm to avoid collisions
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder shortLink = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            int index = (int) (Math.random() * characters.length());
+            shortLink.append(characters.charAt(index));
+        }
+        return shortLink.toString();
+    }
+}
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+public class ShortLinkController {
+
+    @Autowired
+    private ShortLinkService shortLinkService;
+
+    @PostMapping("/shorten")
+    public String shortenUrl(@RequestBody String longUrl) {
+        return shortLinkService.shortenUrl(longUrl);
+    }
+
+    @GetMapping("/{shortLink}")
+    public String expandUrl(@PathVariable String shortLink) {
+        return shortLinkService.expandUrl(shortLink);
+    }
+}
