@@ -1,0 +1,70 @@
+import java.util.Scanner;
+
+public class TextAdventureGame {
+
+    public static void main(String[] args) {
+        // Introduction
+        System.out.println("Welcome to the Text Adventure Game!");
+        System.out.println("You find yourself in a mysterious land with choices to make...");
+
+        // Game loop
+        while (true) {
+            // Display the current situation
+            System.out.println("\nCurrent situation: ");
+            System.out.println("1. Explore the dark forest");
+            System.out.println("2. Cross the old bridge");
+            System.out.println("3. Enter the cave");
+
+            // Get user input
+            int userChoice = getUserInput();
+
+            // Process user choice
+            switch (userChoice) {
+                case 1:
+                    exploreDarkForest();
+                    break;
+                case 2:
+                    crossOldBridge();
+                    break;
+                case 3:
+                    enterCave();
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    private static int getUserInput() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter your choice (1, 2, or 3): ");
+        while (!scanner.hasNextInt()) {
+            System.out.println("Invalid input. Please enter a number.");
+            scanner.next(); // consume the invalid input
+        }
+        return scanner.nextInt();
+    }
+
+    private static void exploreDarkForest() {
+        System.out.println("You enter the dark forest and encounter a mysterious creature.");
+        System.out.println("What do you want to do?");
+        System.out.println("1. Try to communicate with the creature");
+        System.out.println("2. Attack the creature");
+        int userChoice = getUserInput();
+        if (userChoice == 1) {
+            System.out.println("The creature responds peacefully. You continue your journey.");
+        } else {
+            System.out.println("The creature attacks! You barely escape.");
+        }
+    }
+
+    private static void crossOldBridge() {
+        // Implement the storyline for crossing the old bridge
+        // Include decision points and outcomes
+    }
+
+    private static void enterCave() {
+        // Implement the storyline for entering the cave
+        // Include decision points and outcomes
+    }
+}
